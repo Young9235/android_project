@@ -17,6 +17,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView mTextMessage;
     LinearLayout calendar, list, diary;
 
+
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
