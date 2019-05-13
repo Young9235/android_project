@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -177,6 +178,14 @@ public class MainActivity extends AppCompatActivity {
         gridAdapter = new GridAdapter(getApplicationContext(), dayList);
 
         gridView.setAdapter(gridAdapter);
+
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                setContentView(R.layout.detail);
+                //Intent intent = new Intent(getApplicationContext(),detail_display.class);
+            }
+        });
     }
 
     /**
@@ -287,8 +296,7 @@ public class MainActivity extends AppCompatActivity {
             for (int i = 0; i < mCal.getActualMaximum(Calendar.DAY_OF_MONTH); i++) {
                 String Today = String.valueOf(i);
                 if (Today.equals(getItem(position))) {
-
-                    holder.tvItemGridView.setTextColor(getResources().getColor(R.color.black));
+                    holder.tvItemGridView.setTextColor(getResources().getColor(R.color.gray));
                 }
             }
             if ("일".equals(getItem(0))) {
@@ -297,10 +305,8 @@ public class MainActivity extends AppCompatActivity {
 
             sToday = String.valueOf(today);
             if (sToday.equals(getItem(position))) {
-                holder.tvItemGridView.setTextColor(getResources().getColor(R.color.gray));
+                holder.tvItemGridView.setTextColor(getResources().getColor(R.color.black));
             }
-
-
             return convertView;
 
         }
