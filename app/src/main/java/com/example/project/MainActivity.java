@@ -1,28 +1,24 @@
 package com.example.project;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
@@ -103,6 +99,17 @@ public class MainActivity extends AppCompatActivity {
         inflater.inflate(R.layout.list_view, null);
 
         ListView listView = findViewById(R.id.main_list_view);
+        TextView mainListMon = findViewById(R.id.main_list_mon);
+
+        mCal = Calendar.getInstance();
+        int ListDate = mCal.get(Calendar.DATE);
+        String dayString = String.valueOf(ListDate);
+
+        int listYear = mCal.get(Calendar.YEAR);
+        int listMon = mCal.get(Calendar.MONTH) + 1;
+        String getDateY = String.valueOf(listYear);
+        String getDateM = String.valueOf(listMon) ;
+        mainListMon.setText(getDateY + "/" + getDateM);
 
         AbookListVO vo1 =
                 new AbookListVO("1", "60,000");
@@ -113,13 +120,13 @@ public class MainActivity extends AppCompatActivity {
         AbookListVO vo4 =
                 new AbookListVO("4", "40,000");
         AbookListVO
-                vo5 = new AbookListVO("5", "80,000");
+                vo5 = new AbookListVO(dayString, "80,000");
 
         AbookListVO data[] = {
                 vo1, vo2, vo3, vo4, vo5
         };
 
-        CustomAdapter adapter = new CustomAdapter(calander.this, R.layout.list_view, data);
+        CustomAdapter adapter = new CustomAdapter(MainActivity.this, R.layout.list_view, data);
         listView.setAdapter(adapter);
 
         /** 환경설정 버튼 **/
@@ -127,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
         setButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(calander.this, "setting", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "setting", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -206,174 +213,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    /**
-     * 그리드뷰 어댑터
-     */
-
-    private class GridAdapter extends BaseAdapter {
 
 
-        private final List<String> list;
-
-        private final LayoutInflater inflater;
-
-
-        /**
-         * 생성자
-         */
-
-        public GridAdapter(Context context, List<String> list) {
-
-            this.list = list;
-
-            this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-        }
-
-        @Override
-
-        public int getCount() {
-
-            return list.size();
-
-        }
-
-        @Override
-
-        public String getItem(int position) {
-
-            return list.get(position);
-
-        }
-
-        @Override
-
-        public long getItemId(int position) {
-
-            return position;
-
-        }
-
-        @Override
-
-        public View getView(int position, View convertView, ViewGroup parent) {
-
-
-            ViewHolder holder = null;
-
-
-            if (convertView == null) {
-
-                convertView = inflater.inflate(R.layout.item_calendar_gridview, parent, false);
-
-                holder = new ViewHolder();
-
-
-                holder.tvItemGridView = (TextView) convertView.findViewById(R.id.tv_item_gridview);
-
-
-                convertView.setTag(holder);
-
-            } else {
-
-                holder = (ViewHolder) convertView.getTag();
-
-            }
-
-            holder.tvItemGridView.setText("" + getItem(position));
-
-
-            //해당 날짜 텍스트 컬러,배경 변경
-
-            mCal = Calendar.getInstance();
-
-            //오늘 day 가져옴
-
-            Integer today = mCal.get(Calendar.DAY_OF_MONTH);
-
-            String sToday = String.valueOf(today);
-
-            for (int i = 0; i < mCal.getActualMaximum(Calendar.DAY_OF_MONTH); i++) {
-                String Today = String.valueOf(i);
-                if (Today.equals(getItem(position))) {
-                    holder.tvItemGridView.setTextColor(getResources().getColor(R.color.gray));
-                }
-            }
-            if ("일".equals(getItem(0))) {
-                holder.tvItemGridView.setTextColor(getResources().getColor(R.color.gray));
-            }
-
-            sToday = String.valueOf(today);
-            if (sToday.equals(getItem(position))) {
-                holder.tvItemGridView.setTextColor(getResources().getColor(R.color.black));
-            }
-            return convertView;
-
-        }
-
-    }
-
-    private class ViewHolder {
-
-        TextView tvItemGridView;
-
-    }
-
-    /**
-     * 리스트형 달력 데이터
-     **/
-    class AbookListVO {
-        String listDay;
-        String listMoney;
-
-        AbookListVO(String listDay, String listMoney) {
-            this.listDay = listDay;
-            this.listMoney = listMoney;
-        }
-    }
-
-    /**
-     * 리스트형 달력 어뎁터
-     **/
-    class CustomAdapter extends BaseAdapter {
-        //생성자 포인터의 개념과 비슷? MainActivity를 가리키기 위함
-        calander ma;
-        int layout;
-        AbookListVO[] data;
-
-        CustomAdapter(calander ma, int view, AbookListVO[] data) {
-            this.ma = ma;
-            this.layout = view;
-            this.data = data;
-        }
-
-        @Override
-        public int getCount() {
-            return data.length;               // 5개의 view의 모습이 list항목의 하나로 나온다.
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-
-            LayoutInflater inflater = ma.getLayoutInflater();
-            View view = inflater.inflate(layout, null);
-            TextView day = view.findViewById(R.id.list_day);
-            TextView money = view.findViewById(R.id.list_money);
-
-            day.setText(data[position].listDay);
-            money.setText(data[position].listMoney);
-
-            return view;
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return null;
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return 0;
-        }
-    }
 }
