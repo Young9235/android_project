@@ -2,9 +2,9 @@ package com.example.project;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
-import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
                 vo1, vo2, vo3, vo4, vo5
         };
 
-        CustomAdapter adapter = new CustomAdapter(MainActivity.this, R.layout.list_view, data);
+        CustomAdapter adapter = new CustomAdapter(calander.this, R.layout.list_view, data);
         listView.setAdapter(adapter);
 
         /** 환경설정 버튼 **/
@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
         setButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(MainActivity.this, "setting", Toast.LENGTH_SHORT).show();
+                Toast.makeText(calander.this, "setting", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -337,11 +337,11 @@ public class MainActivity extends AppCompatActivity {
      **/
     class CustomAdapter extends BaseAdapter {
         //생성자 포인터의 개념과 비슷? MainActivity를 가리키기 위함
-        MainActivity ma;
+        calander ma;
         int layout;
         AbookListVO[] data;
 
-        CustomAdapter(MainActivity ma, int view, AbookListVO[] data) {
+        CustomAdapter(calander ma, int view, AbookListVO[] data) {
             this.ma = ma;
             this.layout = view;
             this.data = data;
