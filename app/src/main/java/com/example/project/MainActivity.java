@@ -1,5 +1,6 @@
 package com.example.project;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
@@ -100,18 +101,18 @@ public class MainActivity extends AppCompatActivity {
         ListView listView = findViewById(R.id.main_list_view);
         TextView mainListMon = findViewById(R.id.main_list_mon);
 
+
         mCal = Calendar.getInstance();
         int ListDate = mCal.get(Calendar.DATE);
         String dayString = String.valueOf(ListDate);
 
-        int listYear = mCal.get(Calendar.YEAR);
-        int listMon = mCal.get(Calendar.MONTH) + 1;
-        String getDateY = String.valueOf(listYear);
-        String getDateM = String.valueOf(listMon) ;
-        mainListMon.setText(getDateY + "/" + getDateM);
+        mainListMon.setText(curYearFormat.format(date) + "/" + curMonthFormat.format(date));
+
+        int listMon = mCal.get(Calendar.MONTH);
+
 
         AbookListVO vo1 =
-                new AbookListVO("1", "60,000");
+                new AbookListVO(dayString, "60,000");
         AbookListVO vo2 =
                 new AbookListVO("2", "20,000");
         AbookListVO vo3 =
@@ -119,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
         AbookListVO vo4 =
                 new AbookListVO("4", "40,000");
         AbookListVO
-                vo5 = new AbookListVO(dayString, "80,000");
+                vo5 = new AbookListVO("5", "80,000");
 
         AbookListVO data[] = {
                 vo1, vo2, vo3, vo4, vo5
@@ -188,8 +189,9 @@ public class MainActivity extends AppCompatActivity {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                setContentView(R.layout.detail);
-                //Intent intent = new Intent(getApplicationContext(),detail_display.class);
+                //setContentView(R.layout.detail);
+                Intent intent = new Intent(getApplicationContext(), Detail.class);
+                startActivity(intent);
             }
         });
     }

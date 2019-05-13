@@ -3,4 +3,5 @@
     <string name="title_home">달력형 가계부</string>
     <string name="title_dashboard">목록형 가계부</string>
     <string name="title_notifications">1DAY 성찰일지</string>
+    <string name="title_activity_detail">Detail</string>
 </resources>
