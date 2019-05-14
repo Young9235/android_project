@@ -6,9 +6,11 @@ package com.example.project;
 public class AbookListVO {
     String listDay;
     String listMoney;
+    String listDayWeek;
 
-    AbookListVO(String listDay, String listMoney) {
+    AbookListVO(String listDay, String listMoney, String listDayWeek) {
         this.listDay = listDay;
         this.listMoney = listMoney;
+        this.listDayWeek = listDayWeek;
     }
 }

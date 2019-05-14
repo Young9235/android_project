@@ -93,43 +93,6 @@ public class MainActivity extends AppCompatActivity {
 
         final SimpleDateFormat curDayFormat = new SimpleDateFormat("dd", Locale.KOREA);
 
-
-        /** 리스트 달력 **/
-        LayoutInflater inflater = getLayoutInflater();   //Layout XML 디자인 모습을 자바의 View 형태로 변환하는 것
-
-        inflater.inflate(R.layout.list_view, null);
-
-        ListView listView = findViewById(R.id.main_list_view);
-        TextView mainListMon = findViewById(R.id.main_list_mon);
-
-
-        mCal = Calendar.getInstance();
-        int ListDate = mCal.get(Calendar.DATE);
-        String dayString = String.valueOf(ListDate);
-
-        mainListMon.setText(curYearFormat.format(date) + "/" + curMonthFormat.format(date));
-
-        int listMon = mCal.get(Calendar.MONTH);
-
-
-        AbookListVO vo1 =
-                new AbookListVO(dayString, "60,000");
-        AbookListVO vo2 =
-                new AbookListVO("2", "20,000");
-        AbookListVO vo3 =
-                new AbookListVO("3", "18,000");
-        AbookListVO vo4 =
-                new AbookListVO("4", "40,000");
-        AbookListVO
-                vo5 = new AbookListVO("5", "80,000");
-
-        AbookListVO data[] = {
-                vo1, vo2, vo3, vo4, vo5
-        };
-
-        CustomAdapter adapter = new CustomAdapter(MainActivity.this, R.layout.list_view, data);
-        listView.setAdapter(adapter);
-
         /** 환경설정 버튼 **/
         final ImageView setButton = findViewById(R.id.setting);
         setButton.setOnClickListener(new View.OnClickListener() {
@@ -182,7 +145,6 @@ public class MainActivity extends AppCompatActivity {
 
         setCalendarDate(mCal.get(Calendar.MONTH) + 1);
 
-
         gridAdapter = new GridAdapter(getApplicationContext(), dayList);
 
         gridView.setAdapter(gridAdapter);
@@ -195,6 +157,50 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+
+        /** 리스트 달력 **/
+        LayoutInflater inflater = getLayoutInflater();   //Layout XML 디자인 모습을 자바의 View 형태로 변환하는 것
+
+        inflater.inflate(R.layout.list_view, null);
+
+        ListView listView = findViewById(R.id.main_list_view);
+        TextView mainListMon = findViewById(R.id.main_list_mon);
+
+
+        mCal = Calendar.getInstance();
+//        mCal.set(Calendar.DATE, 3);
+        int ListDate = mCal.get(Calendar.DATE);
+        int ListDateArray[] = { ListDate, ListDate-1, ListDate-2, ListDate-3, ListDate-4, ListDate-5, ListDate-6, ListDate-7 };
+
+        //System.out.println(ListDateArray[0]);
+
+        String dayLatest;
+
+        ArrayList<AbookListVO> data = new ArrayList<>();
+
+        for (int i=0; i<7; i++) {
+            try {
+                int day = ListDateArray[i];
+                if(day <= 0) {
+                    break;
+                }
+                dayLatest = String.valueOf(ListDateArray[i]);
+                String dayWeek = getDateDay(dayLatest, "dd");
+
+                AbookListVO vo = new AbookListVO(dayLatest, "60,000", dayWeek);
+                data.add(vo);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+
+        mainListMon.setText(curYearFormat.format(date) + "/" + curMonthFormat.format(date));
+
+        CustomAdapter adapter = new CustomAdapter(MainActivity.this, R.layout.list_view, data, dayList);
+        listView.setAdapter(adapter);
+
     }
 
     /**
@@ -205,7 +211,6 @@ public class MainActivity extends AppCompatActivity {
 
         mCal.set(Calendar.MONTH, month - 1);
 
-
         for (int i = 0; i < mCal.getActualMaximum(Calendar.DAY_OF_MONTH); i++) {
 
             dayList.add("" + (i + 1));
@@ -215,6 +220,52 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * 특정 날짜에 대하여 요일을 구함(일 ~ 토)
+     * @param date
+     * @param dateType
+     * @return
+     * @throws Exception
+     */
+    public String getDateDay(String date, String dateType) throws Exception {
 
+        String day = "" ;
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat(dateType) ;
+        Date nDate = dateFormat.parse(date) ;
+
+        Calendar cal = Calendar.getInstance() ;
+        cal.setTime(nDate);
+
+        int dayNum = cal.get(Calendar.DAY_OF_WEEK) ;
+
+
+        switch(dayNum){
+            case 1:
+                day = "(일요일)";
+                break ;
+            case 2:
+                day = "(월요일)";
+                break ;
+            case 3:
+                day = "(화요일)";
+                break ;
+            case 4:
+                day = "(수요일)";
+                break ;
+            case 5:
+                day = "(목요일)";
+                break ;
+            case 6:
+                day = "(금요일)";
+                break ;
+            case 7:
+                day = "(토요일)";
+                break ;
+
+        }
+
+        return day ;
+    }
 
 }
