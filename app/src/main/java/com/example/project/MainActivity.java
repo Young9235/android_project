@@ -131,22 +131,13 @@ public class MainActivity extends AppCompatActivity {
         //gridview 요일 표시
 
         dayList = new ArrayList<String>();
-
         dayList.add("일");
-
         dayList.add("월");
-
         dayList.add("화");
-
         dayList.add("수");
-
         dayList.add("목");
-
         dayList.add("금");
-
         dayList.add("토");
-
-
         mCal = Calendar.getInstance();
 
         //이번달 1일 무슨요일인지 판단 mCal.set(Year,Month,Day)
@@ -207,12 +198,7 @@ public class MainActivity extends AppCompatActivity {
         mHelper = new MyDBHelper(this);
         Map<String, Map<String, Object>> list2 = mHelper.getData();
         Log.e("data", list2.toString());
-        
 
-        /** 총액 조회**/
-
-        //String sum = String.valueOf(cursor.getInt(0));
-        //System.out.println("resSum : " + sum);
 
         for (int i=0; i<7; i++) {
             try {

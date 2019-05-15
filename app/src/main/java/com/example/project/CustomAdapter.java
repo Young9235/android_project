@@ -40,7 +40,14 @@ public class CustomAdapter extends BaseAdapter {
         Button mainListBtn = view.findViewById(R.id.list_btn);
 
         day.setText(data.get(position).listDay);
-        money.setText(data.get(position).listMoney);
+
+        if(data.get(position).listMoney.equals("0")) {
+            money.setText("내역이 없습니다.");
+        }
+        else {
+            money.setText(data.get(position).listMoney);
+        }
+
         dayWeek.setText(data.get(position).listDayWeek);
 
         String dayParam = day.getText().toString();
