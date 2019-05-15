@@ -5,7 +5,9 @@
 
     android:layout_height="match_parent"
 
-    android:gravity="center">
+    android:gravity="center"
+    android:orientation="vertical"
+    >
 
 
 
@@ -16,6 +18,18 @@
         android:layout_width="wrap_content"
 
         android:layout_height="80dp"
+
+        android:textSize="20sp"
+        android:layout_centerInParent="true"
+
+        />
+    <TextView
+
+        android:id="@+id/total_gridview"
+
+        android:layout_width="wrap_content"
+
+        android:layout_height="20dp"
 
         android:textSize="20sp"
         android:layout_centerInParent="true"

@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -153,7 +154,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //setContentView(R.layout.detail);
+                String s_date = curYearFormat.format(date) + "/" + curMonthFormat.format(date) + "/" + String.valueOf(position - 9) ;
+
+
                 Intent intent = new Intent(getApplicationContext(), Detail.class);
+                intent.putExtra("date", s_date);
                 startActivity(intent);
             }
         });
