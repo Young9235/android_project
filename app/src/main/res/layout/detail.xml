@@ -59,7 +59,6 @@
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:text="시간"
-
             android:textSize="15dp"/>
 
         <TextView
@@ -68,7 +67,6 @@
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:text="카드"
-
             android:textSize="15dp"/>
     </LinearLayout>
 </LinearLayout>
