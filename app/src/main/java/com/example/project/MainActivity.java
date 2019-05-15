@@ -1,11 +1,14 @@
 package com.example.project;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,7 +23,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
     private TextView mTextMessage;
@@ -30,6 +36,20 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<String> dayList;
     private GridView gridView;
     private Calendar mCal;
+
+
+    MyDBHelper mHelper;
+    SQLiteDatabase db;
+    Cursor cursor;
+    MyCursorAdapter myAdapter;
+
+    final static String KEY_ID = "_id";
+    final static String KEY_CONTEXT = "context";
+    final static String KEY_PRICE = "price";
+    final static String KEY_PAY = "pay";
+    final static String TABLE_NAME = "MyAccountList";
+    final static String KEY_DATE = "date";
+    public static String View_DATE = getToday_date();           // 날짜를 현재날짜로 초기화
 
     /**
      * 하단 버튼 설정
@@ -176,29 +196,56 @@ public class MainActivity extends AppCompatActivity {
         //System.out.println(ListDateArray[0]);
 
         String dayLatest;
+        String yearMonth = curYearFormat.format(date) + "/" + curMonthFormat.format(date);
+
+        mainListMon.setText(yearMonth);
+        String YY = curYearFormat.format(date);
+        String MM = curMonthFormat.format(date);
 
         ArrayList<AbookListVO> data = new ArrayList<>();
+
+        mHelper = new MyDBHelper(this);
+        Map<String, Map<String, Object>> list2 = mHelper.getData();
+        Log.e("data", list2.toString());
+        
+
+        /** 총액 조회**/
+
+        //String sum = String.valueOf(cursor.getInt(0));
+        //System.out.println("resSum : " + sum);
 
         for (int i=0; i<7; i++) {
             try {
                 int day = ListDateArray[i];
+                Log.e("data", "day " + day);
                 if(day <= 0) {
                     break;
                 }
+                Log.e("data", "day2 " + day);
                 dayLatest = String.valueOf(ListDateArray[i]);
                 String dayWeek = getDateDay(dayLatest, "dd");
 
-                AbookListVO vo = new AbookListVO(dayLatest, "60,000", dayWeek);
+                String year = mCal.get(Calendar.YEAR) + "";
+                String month = (mCal.get(Calendar.MONTH) + 1) < 10 ? "0" + (mCal.get(Calendar.MONTH) + 1) : (mCal.get(Calendar.MONTH) + 1) + "";
+                String ymd = year + "/" + month + "/" + (dayLatest.length() < 2 ? "0" + dayLatest : dayLatest);
+
+                Log.e("data", "week " + dayWeek);
+                Log.e("data", "ymd " + ymd);
+                int price = 0;
+                if(list2.get(ymd) != null) {
+                    price = Integer.parseInt((String) list2.get(ymd).get("sum"));
+                    Log.e("data", "price " + price);
+                }
+                AbookListVO vo = new AbookListVO(dayLatest, price + "", dayWeek, YY, MM);
                 data.add(vo);
+                Log.e("data", "vo " + vo);
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-
-
-        mainListMon.setText(curYearFormat.format(date) + "/" + curMonthFormat.format(date));
-
-        CustomAdapter adapter = new CustomAdapter(MainActivity.this, R.layout.list_view, data, dayList);
+        Log.e("data", "list000 " + data.toString());
+        CustomAdapter adapter = new CustomAdapter(MainActivity.this, R.layout.list_view, data);
         listView.setAdapter(adapter);
 
     }
@@ -266,6 +313,13 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return day ;
+    }
+
+    static public String getToday_date(){
+        SimpleDateFormat mSimpleDateFormat = new SimpleDateFormat("yyyy/M/d", Locale.KOREA);
+        Date currentTime = new Date();
+        String Today_day = mSimpleDateFormat.format(currentTime).toString();
+        return Today_day;
     }
 
 }

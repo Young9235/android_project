@@ -37,7 +37,8 @@ public class Detail extends AppCompatActivity {
     final static String KEY_PAY = "pay";
     final static String TABLE_NAME = "MyAccountList";
     final static String KEY_DATE = "date";
-    public static String View_DATE = getToday_date();
+    public static String View_DATE = getToday_date();           // 날짜를 현재날짜로 초기화
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +53,14 @@ public class Detail extends AppCompatActivity {
         btn_go_calendar = (Button) findViewById(R.id.btn_go_calendar);
         ListView list = (ListView) findViewById( R.id.account_list );
         sum_view = (TextView) findViewById(R.id.total_sum);
+
+        btn_go_calendar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
 
         //날짜 표시 인텐트 설정
         Intent comingIntent = getIntent();
@@ -68,8 +77,11 @@ public class Detail extends AppCompatActivity {
 
         // 총합 가격 표시
         String queryPriceSum = String.format( " SELECT SUM(price) FROM %s WHERE date = '%s'", TABLE_NAME, View_DATE);
+
         cursor = db.rawQuery( queryPriceSum, null );
         cursor.moveToNext();
+
+        /** 총액 조회**/
         String sum = String.valueOf(cursor.getInt(0));
         Log.d(TAG, "sum : " + sum);
         sum_view.setText(sum);
@@ -97,15 +109,18 @@ public class Detail extends AppCompatActivity {
 
         //문자열은 ''로 감싸야 한다.
         String query = String.format(
-                "INSERT INTO %s VALUES ( null, '%s', %d, '%s', '%s' );", TABLE_NAME, contexts, price, pay, View_DATE);
+                "INSERT INTO %s VALUES ( null, '%s', %d, '%s', '%s');", TABLE_NAME, contexts, price, pay, View_DATE);
         db.execSQL( query );
 
         // 총합 가격 표시
         String queryPriceSum = String.format( " SELECT SUM(price) FROM %s WHERE date = '%s'", TABLE_NAME, View_DATE);
         cursor = db.rawQuery( queryPriceSum, null );
         cursor.moveToNext();
+
         String sum = String.valueOf(cursor.getInt(0));
         Log.d(TAG, "sum : " + sum);
+
+        /** 결과 값 메인으로 전송 **/
         sum_view.setText(sum);
 
         // 아래 메서드를 실행하면 리스트가 갱신된다. 하지만 구글은 이 메서드를 deprecate한다. 고로 다른 방법으로 해보자.
@@ -144,4 +159,6 @@ public class Detail extends AppCompatActivity {
         String TABLE_NAME = "a_" + getToday_date();
         String querySelectAll = String.format( "SELECT * FROM %s", TABLE_NAME );
     }
+
+
 }

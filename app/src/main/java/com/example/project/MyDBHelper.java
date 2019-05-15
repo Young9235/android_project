@@ -1,8 +1,14 @@
 package com.example.project;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.ArrayAdapter;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.example.project.Detail.KEY_CONTEXT;
 import static com.example.project.Detail.KEY_DATE;
@@ -27,7 +33,8 @@ class MyDBHelper extends SQLiteOpenHelper {
                 + "%s TEXT, "
                 + "%s INTEGER, "
                 + "%s TEXT, "
-                + "%s TEXT);", TABLE_NAME, KEY_ID, KEY_CONTEXT, KEY_PRICE, KEY_PAY, KEY_DATE);
+                + "%s TEXT, "
+                + "%s INTEGER);", TABLE_NAME, KEY_ID, KEY_CONTEXT, KEY_PRICE, KEY_PAY, KEY_DATE);
         db.execSQL(query);
     }
 
@@ -35,5 +42,29 @@ class MyDBHelper extends SQLiteOpenHelper {
         String query = String.format("DROP TABLE IF EXISTS %s", TABLE_NAME);
         db.execSQL(query);
         onCreate(db);
+    }
+
+    public Map<String, Map<String, Object>> getData() {
+        SQLiteDatabase db = getWritableDatabase();
+
+        Map<String, Map<String, Object>> list = new HashMap<>();
+
+        // 총합 가격 표시
+        //String queryPriceSum = String.format( " SELECT SUM(price) FROM %s WHERE date = '%s'", TABLE_NAME, View_DATE);
+        String queryPriceSum = String.format( " SELECT DATE, SUM(PRICE) FROM %s GROUP BY DATE", TABLE_NAME);
+
+        System.out.println("res1 : " + queryPriceSum);
+
+        Cursor cursor = db.rawQuery(queryPriceSum, null);
+        //cursor.moveToNext();
+
+        while(cursor.moveToNext()) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("date", cursor.getString(0));
+            map.put("sum", String.valueOf(cursor.getInt(1)));
+            list.put(cursor.getString(0), map);
+        }
+
+        return list;
     }
 }
