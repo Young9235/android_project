@@ -164,7 +164,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //setContentView(R.layout.detail);
+                String s_date = curYearFormat.format(date) + "/" + curMonthFormat.format(date) + "/" + String.valueOf(position - 9) ;
+
+
                 Intent intent = new Intent(getApplicationContext(), Detail.class);
+                intent.putExtra("date", s_date);
                 startActivity(intent);
             }
         });
