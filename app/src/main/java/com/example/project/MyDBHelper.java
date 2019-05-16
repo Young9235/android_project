@@ -33,9 +33,10 @@ class MyDBHelper extends SQLiteOpenHelper {
                 + "%s TEXT, "
                 + "%s INTEGER, "
                 + "%s TEXT, "
-                + "%s TEXT, "
-                + "%s INTEGER);", TABLE_NAME, KEY_ID, KEY_CONTEXT, KEY_PRICE, KEY_PAY, KEY_DATE);
+                + "%s TEXT);", TABLE_NAME, KEY_ID, KEY_CONTEXT, KEY_PRICE, KEY_PAY, KEY_DATE);
         db.execSQL(query);
+
+
     }
 
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {

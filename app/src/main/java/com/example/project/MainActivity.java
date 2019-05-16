@@ -18,12 +18,19 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.w3c.dom.Text;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -40,6 +47,16 @@ public class MainActivity extends AppCompatActivity {
     private GridView gridView;
     private Calendar mCal;
 
+    private ArrayList<String> diary_list = null;
+    private ArrayAdapter<String> diary_adapter;
+    private ListView diary_listView = null;
+    private Button add;
+    private Button remove;
+    private EditText editText;
+
+
+
+
     MyDBHelper mHelper;
 
 
@@ -54,6 +71,16 @@ public class MainActivity extends AppCompatActivity {
     NotificationManager notificationManager;
     PendingIntent intent;
     public final String PREFERENCE = "com.studio572.samplesharepreference";
+
+    private ArrayList<HashMap<String,String>> Data = new ArrayList<HashMap<String, String>>();
+
+    private HashMap<String,String> InputData1 = new HashMap<>();
+
+    private HashMap<String,String> InputData2 = new HashMap<>();
+
+    private ListView diary_View;
+
+
 
     /**
      * 하단 버튼 설정
@@ -118,13 +145,24 @@ public class MainActivity extends AppCompatActivity {
         tvDate.setText(curYearFormat.format(date) + "/" + curMonthFormat.format(date));
         //gridview 요일 표시
         dayList = new ArrayList<>();
+
+        dayList = new ArrayList<String>();
+
         dayList.add("일");
+
         dayList.add("월");
+
         dayList.add("화");
+
         dayList.add("수");
+
         dayList.add("목");
+
         dayList.add("금");
+
         dayList.add("토");
+
+
         mCal = Calendar.getInstance();
         //이번달 1일 무슨요일인지 판단 mCal.set(Year,Month,Day)
         mCal.set(Integer.parseInt(curYearFormat.format(date)), Integer.parseInt(curMonthFormat.format(date)) - 1, 1);
@@ -133,12 +171,44 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 1; i < dayNum; i++) {
             dayList.add("");
         }
+        String YY = curYearFormat.format(date);
+        String MM = curMonthFormat.format(date);
 
 
         /** 달력 일자 어뎁터 이용하여 getView로 전송 **/
         setCalendarDate(mCal.get(Calendar.MONTH) + 1);
         gridAdapter = new GridAdapter(getApplicationContext(), dayList);
         gridView.setAdapter(gridAdapter);
+
+        //gridAdapter = new GridAdapter(getApplicationContext(), dayList, data);
+        ArrayList<AbookListVO> data3 = new ArrayList<>();
+
+        mHelper = new MyDBHelper(this);
+        Map<String, Map<String, Object>> list3 = mHelper.getData();
+
+        Log.e("data1", list3.toString());
+        Log.e("data1", String.valueOf(mCal.getActualMaximum(Calendar.DAY_OF_MONTH)));
+        int max_day = mCal.getActualMaximum(Calendar.DAY_OF_MONTH);
+
+
+
+        int [] g_day;
+        g_day = new int[max_day];
+
+        String g_daylist;
+        for (int i=0; i < mCal.getActualMaximum(Calendar.DAY_OF_MONTH); i++) {
+            g_day[i] = i + 1;
+            Log.e("data1", String.valueOf(g_day[i]));
+
+        }
+
+        GridAdapter g_adapter= new GridAdapter(getApplicationContext(), dayList, list3, R.layout.item_calendar_gridview);
+        gridView.setAdapter(g_adapter);
+
+        //gridView.setAdapter(gridAdapter);
+        //CustomAdapter adapter = new CustomAdapter(MainActivity.this, R.layout.list_view, data);
+
+
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -172,6 +242,11 @@ public class MainActivity extends AppCompatActivity {
         mainListMon.setText(yearMonth);
         YY = curYearFormat.format(date);
         MM = curMonthFormat.format(date);
+        //String YY = curYearFormat.format(date);
+        //String MM = curMonthFormat.format(date);
+
+        ArrayList<AbookListVO> data = new ArrayList<>();
+
         mHelper = new MyDBHelper(this);
 
         dataListView();
@@ -191,14 +266,23 @@ public class MainActivity extends AppCompatActivity {
         Map<String, Map<String, Object>> list2 = mHelper.getData();
         //Log.e("data", list2.toString());
 
+
+
+
+        /** 총액 조회**/
+
+        //String sum = String.valueOf(cursor.getInt(0));
+        //System.out.println("resSum : " + sum);
+        //Log.e("data", list2.toString());
+
         for (int i=0; i<7; i++) {
             try {
                 int day = ListDateArray[i];
-                Log.e("data", "day " + day);
+                //Log.e("data", "day " + day);
                 if(day <= 0) {
                     break;
                 }
-                Log.e("data", "day2 " + day);
+                //Log.e("data", "day2 " + day);
                 dayLatest = String.valueOf(ListDateArray[i]);
                 String dayWeek = getDateDay(dayLatest, "dd");
 
@@ -211,7 +295,7 @@ public class MainActivity extends AppCompatActivity {
                 //int price = 0;
                 if(list2.get(ymd) != null) {
                     price = Integer.parseInt((String) list2.get(ymd).get("sum"));
-                    Log.e("data", "price " + price);
+                    //Log.e("data", "price " + price);
                 }
                 AbookListVO vo = new AbookListVO(dayLatest, price + "", dayWeek, YY, MM);
                 data.add(vo);
@@ -223,8 +307,25 @@ public class MainActivity extends AppCompatActivity {
         }
 
         Log.e("data", "list000 " + data.toString());
+        //Log.e("data", "list000 " + data.toString());
         CustomAdapter adapter = new CustomAdapter(MainActivity.this, R.layout.list_view, data);
         listView.setAdapter(adapter);
+
+        /** 다이어리 **/
+
+        diary_adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
+        ListView lv = (ListView)findViewById(R.id.diary_listView);
+        lv.setAdapter(diary_adapter);
+
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+            @Override
+            public void onItemClick(AdapterView<?> parent, View v, int position, long id){
+                ListView lv = (ListView)parent;
+                String selected = (String)lv.getItemAtPosition(position);
+                TextView tv = (TextView)findViewById(R.id.diary_text);
+                tv.setText(selected);
+            }
+        });
 
 
         /********** 환경설정 버튼 **********/
@@ -291,6 +392,17 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+    public void addButtonClick(View v){
+        EditText et = (EditText) findViewById(R.id.diary_edit);
+        String str = et.getText().toString();
+        diary_adapter.add(str);
+        et.setText("");
+    }
+
+
+
+
+
 
 
     /**
