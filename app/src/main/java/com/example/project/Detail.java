@@ -34,9 +34,11 @@ public class Detail extends AppCompatActivity {
     final static String KEY_ID = "_id";
     final static String KEY_CONTEXT = "context";
     final static String KEY_PRICE = "price";
+
     final static String KEY_PAY = "pay";
     final static String TABLE_NAME = "MyAccountList";
     final static String KEY_DATE = "date";
+
     public static String View_DATE = getToday_date();           // 날짜를 현재날짜로 초기화
 
     @Override
